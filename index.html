@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html>
+<style>
+canvas{border:1px solid black;}
+</style>
+  <body>
+    <canvas id="myCanvas" width="500" height="400"></canvas>
+    <script>
+	//http://whatthetesi.webs.com/test
+	  var WIDTH=500;
+	  var HEIGHT=400;
+	  var x=0;var y=0; var x1=10;var y1=50;
+	  var dx=5;var dy=5;
+      var canvas = document.getElementById('myCanvas');
+      var context = canvas.getContext('2d');
+	  var ballx=WIDTH/2; var bally=HEIGHT/2;
+	  var balldx=5; var balldy=6;
+	  var oppPaddleX=WIDTH-x1;
+	  var oppPaddleY=HEIGHT-y1;
+	  var player=0;var opponent=0;
+	  var radius =5;
+	  
+	function reset(){
+	  ballx=WIDTH/2;bally=HEIGHT/2;
+	}
+	function clear(){
+	  context.clearRect(0,0,WIDTH,HEIGHT);	
+	}
+	function onKeyDown(event){
+	  switch(event.keyCode){
+	    case 87: if(y-dy>=0){
+		  y-=dy;
+		  }break;
+		case 83: if(y+dy+y1<HEIGHT){
+		  y+=dy;
+		  }break;
+	  }
+	  play();
+	}
+	function draw(){
+	  clear();
+	  drawPlayer();
+	  drawOpponent();
+	  drawBall();
+	  drawScore();  
+	}
+	function drawPlayer(){
+	  context.fillStyle='red';
+	  context.fillRect(x,y,x1,y1);
+	}
+	function drawOpponent(){
+	  if(bally > oppPaddleY+(y1/2)){
+	    oppPaddleY+=dy;
+	  }else{
+	  oppPaddleY-=dy;
+	  }
+	  context.fillStyle='blue';
+	  context.fillRect(oppPaddleX,oppPaddleY,x1,y1);
+	}
+	function drawBall(){
+      if((ballx==WIDTH-x1 && (oppPaddleY+y1/2 < bally+y1/2 && oppPaddleY+y1/2 > bally-y1/2)) || (ballx==x1 && (y+y1/2 < bally+y1/2 && y+y1/2 > bally-y1/2))){
+	    balldx=balldx*-1;
+	  }
+	  ballx+=balldx;
+	  if(bally+radius>=HEIGHT || bally-radius <= 0){
+	    balldy=balldy*=-1;
+	  }
+	  bally+=balldy;
+	  context.beginPath();
+	  context.arc(ballx,bally,radius,0,2*Math.PI,true);
+	  context.fillStyle='black';
+	  context.fill();
+	}
+	function drawScore(){
+	  context.fillText(player,20,10);
+	  context.fillText(opponent,WIDTH-20,10);
+	}
+	function play(){
+	  if(player==10 || opponent==10){
+	    if(player>opponent){
+		  context.fillText('Player Wins!',WIDTH/2,HEIGHT/2-20);
+		  alert('Player wins!');
+		}else{
+		  context.fillText('Opponent Wins!',WIDTH/2,HEIGHT/2-20);
+		  alert('Opponent wins!');
+		}
+		player=0; opponent=0;
+		reset();
+	  }
+		if(ballx==WIDTH){
+		  player++;
+		  reset();
+		}
+		if(ballx==0){
+		  opponent++;
+		  reset();
+		}
+      draw();
+	}
+	window.addEventListener('keydown',onKeyDown,true);
+	window.onload=draw();
+    </script>
+  </body>
+</html>
